@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 200, // 고정적인 가로 길이
+    width: 200,
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
