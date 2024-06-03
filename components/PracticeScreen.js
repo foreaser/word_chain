@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
   StyleSheet,
+  Switch,
 } from 'react-native';
 
 export default function PracticeScreen({ navigate }) {
@@ -17,6 +18,8 @@ export default function PracticeScreen({ navigate }) {
   const [gameOver, setGameOver] = useState(false);
   const [wrongWord, setWrongWord] = useState(null);
   const [timerStarted, setTimerStarted] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isRotationEnabled, setIsRotationEnabled] = useState(false);
   const scrollViewRef = useRef();
   const timerRef = useRef(null);
 
@@ -73,6 +76,9 @@ export default function PracticeScreen({ navigate }) {
     setWords([...words, word]);
     setWord('');
     setTimeLeft(10);
+    if (isRotationEnabled) {
+      setIsFlipped(!isFlipped);
+    }
     scrollViewRef.current.scrollToEnd({ animated: true });
   };
 
@@ -82,6 +88,7 @@ export default function PracticeScreen({ navigate }) {
     setTimeLeft(10);
     setGameOver(false);
     setTimerStarted(false);
+    setIsFlipped(false);
   };
 
   const getBackgroundColor = () => {
@@ -116,8 +123,23 @@ export default function PracticeScreen({ navigate }) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: getBackgroundColor() }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: getBackgroundColor(),
+          transform: [
+            { rotate: isFlipped && isRotationEnabled ? '180deg' : '0deg' },
+          ],
+        },
+      ]}
+    >
       <View style={styles.topEmptySpace}></View>
+      {isRotationEnabled && (
+        <Text style={styles.turnText}>
+          {isFlipped ? '2nd 순서' : '1st 순서'}
+        </Text>
+      )}
       <Image source={getTimerImage()} style={styles.timerImage} />
       <View style={styles.wordsWrapper}>
         <ScrollView
@@ -143,6 +165,13 @@ export default function PracticeScreen({ navigate }) {
           editable={!gameOver}
         />
         <Button title="입력" onPress={handleInputSubmit} />
+        <View style={styles.switchContainer}>
+          <Text>2인 게임 모드</Text>
+          <Switch
+            value={isRotationEnabled}
+            onValueChange={setIsRotationEnabled}
+          />
+        </View>
       </View>
       {gameOver && (
         <View style={styles.gameOverMessage}>
@@ -167,10 +196,13 @@ const styles = StyleSheet.create({
   topEmptySpace: {
     flex: 1,
   },
+  turnText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   timerImage: {
     width: 87,
     height: 100,
-
     marginBottom: 20,
   },
   wordsWrapper: {
@@ -220,5 +252,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
   },
 });
