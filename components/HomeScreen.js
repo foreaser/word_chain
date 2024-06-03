@@ -1,6 +1,5 @@
-// HomeScreen.js
 import React from 'react';
-import { View, Pressable, StyleSheet, Alert, Text } from 'react-native';
+import { View, Pressable, StyleSheet, Text } from 'react-native';
 
 export default function HomeScreen({ navigate }) {
   const handlePracticePress = () => {
@@ -8,15 +7,16 @@ export default function HomeScreen({ navigate }) {
   };
 
   const handleBattlePress = () => {
-    Alert.alert('현재 서비스 준비중입니다');
+    navigate('MutualGame');
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.titleText}>끝말잇기 Game</Text>
       <Pressable
         style={({ pressed }) => [
           styles.button,
-          { backgroundColor: pressed ? 'darkblue' : 'blue' },
+          { backgroundColor: pressed ? 'deepskyblue' : 'dodgerblue' },
         ]}
         onPress={handlePracticePress}
       >
@@ -25,7 +25,7 @@ export default function HomeScreen({ navigate }) {
       <Pressable
         style={({ pressed }) => [
           styles.button,
-          { backgroundColor: pressed ? 'darkgreen' : 'green' },
+          { backgroundColor: pressed ? 'darkblue' : 'blue' },
         ]}
         onPress={handleBattlePress}
       >
@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'navy',
+    marginBottom: 20,
   },
   button: {
     width: 200,
