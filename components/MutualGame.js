@@ -38,11 +38,20 @@ const useFetch = (url) => {
   return { data, loading, error };
 };
 
+const applyDuEumLaw = (word) => {
+  if (word.endsWith('름')) return word.replace('름', '음');
+  if (word.endsWith('림')) return word.replace('림', '임');
+  if (word.endsWith('르')) return word.replace('르', '으');
+  return word;
+};
+
 const WordExistCheck = (word) =>
   `${SEARCH_URL}?key=${API_KEY}&req_type=json&q=${word}&advanced=y&method=exact`;
 
-const GetWordDefinition = (lastChar) =>
-  `${SEARCH_URL}?key=${API_KEY}&req_type=json&q=${lastChar}&advanced=y&sort=popular&type1=word&method=start&num=10&pos=1&type2=native,chinese&type3=general&type4=general`;
+const GetWordDefinition = (lastChar) => {
+  const modifiedLastChar = applyDuEumLaw(lastChar);
+  return `${SEARCH_URL}?key=${API_KEY}&req_type=json&q=${modifiedLastChar}&advanced=y&sort=popular&type1=word&method=start&num=10&pos=1&type2=native,chinese&type3=general&type4=general`;
+};
 
 export default function GameScreen({ navigate }) {
   const [word, setWord] = useState('');
