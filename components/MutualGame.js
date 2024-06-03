@@ -42,6 +42,7 @@ const applyDuEumLaw = (word) => {
   if (word.endsWith('름')) return word.replace('름', '음');
   if (word.endsWith('림')) return word.replace('림', '임');
   if (word.endsWith('르')) return word.replace('르', '으');
+  if (word.endsWith('력')) return word.replace('력', '역');
   return word;
 };
 
