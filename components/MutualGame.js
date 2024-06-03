@@ -56,6 +56,7 @@ export default function GameScreen({ navigate }) {
   const [nextWordUrl, setNextWordUrl] = useState(null);
   const scrollViewRef = useRef();
   const timerRef = useRef(null);
+  const [GameResult, setGameResult] = useState(0); // 0: 초기값, 1: 승리, 2: 패배
 
   const {
     data: wordData,
@@ -75,7 +76,8 @@ export default function GameScreen({ navigate }) {
       }, 1000);
     } else if (timeLeft === 0 && !gameOver) {
       setGameOver(true);
-      Alert.alert('패배! 시간을 초과했습니다.');
+      setGameResult(2);
+      alert('패배! 시간을 초과했습니다.');
     }
 
     return () => clearTimeout(timerRef.current);
@@ -89,7 +91,7 @@ export default function GameScreen({ navigate }) {
 
         if (words.some((w) => w.word === newWord)) {
           setWrongWord(newWord);
-          Alert.alert('이전에 입력된 단어입니다. 다른 단어를 입력하세요!');
+          alert('이전에 입력된 단어입니다. 다른 단어를 입력하세요!');
           return;
         }
 
@@ -97,7 +99,7 @@ export default function GameScreen({ navigate }) {
           const lastWord = words[words.length - 1].word;
           if (lastWord[lastWord.length - 1] !== newWord[0]) {
             setWrongWord(newWord);
-            Alert.alert('올바른 단어를 입력하세요!');
+            alert('올바른 단어를 입력하세요!');
             return;
           }
         }
@@ -113,7 +115,7 @@ export default function GameScreen({ navigate }) {
         setNextWordUrl(GetWordDefinition(lastChar));
       } else {
         setWrongWord(word);
-        Alert.alert('없는 단어입니다. 다시 입력하세요!');
+        alert('없는 단어입니다. 다시 입력하세요!');
       }
     }
   }, [wordData, wordLoading, wordError]);
@@ -138,7 +140,8 @@ export default function GameScreen({ navigate }) {
         }, 100);
       } else {
         setGameOver(true);
-        Alert.alert('다음 단어를 찾을 수 없습니다. 당신이 승리했습니다!');
+        setGameResult(1); // 승리
+        alert('다음 단어를 찾을 수 없습니다. 당신이 승리했습니다!');
         console.log('끝');
       }
     }
@@ -157,7 +160,7 @@ export default function GameScreen({ navigate }) {
 
   const handleInputSubmit = () => {
     if (gameOver) {
-      Alert.alert('게임이 종료되었습니다. 다시 시작하세요!');
+      alert('게임이 종료되었습니다. 다시 시작하세요!');
       return;
     }
     setWordUrl(WordExistCheck(word));
@@ -173,6 +176,7 @@ export default function GameScreen({ navigate }) {
     setComputerWordInfo(null);
     setWordUrl(null);
     setNextWordUrl(null);
+    setGameResult(0);
   };
 
   const getBackgroundColor = () => {
@@ -242,9 +246,19 @@ export default function GameScreen({ navigate }) {
         />
         <Button title="입력" onPress={handleInputSubmit} />
       </View>
-      {gameOver && (
+      {GameResult === 2 && (
         <View style={styles.gameOverMessage}>
-          <Text style={styles.gameOverText}>패배! 시간을 초과했습니다.</Text>
+          <Text style={[styles.gameOverText, { color: 'red' }]}>
+            패배! 시간을 초과했습니다.
+          </Text>
+          <Button title="다시 시작" onPress={handleRestart} />
+        </View>
+      )}
+      {GameResult === 1 && (
+        <View style={styles.gameOverMessage}>
+          <Text style={[styles.gameOverText, { color: 'green' }]}>
+            승리! 당신이 이겼습니다.
+          </Text>
           <Button title="다시 시작" onPress={handleRestart} />
         </View>
       )}
@@ -321,7 +335,6 @@ const styles = StyleSheet.create({
   },
   gameOverText: {
     fontSize: 20,
-    color: 'red',
     marginBottom: 10,
   },
   footer: {
